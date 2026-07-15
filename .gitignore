@@ -1,0 +1,20 @@
+# Artefactos de compilación de Rust/Cargo.
+# NOTA: NO ignoramos Cargo.lock — todos los proyectos de este repo son
+# binarios (no bibliotecas publicadas), y la convención correcta para
+# binarios es versionar Cargo.lock para builds reproducibles.
+target/
+
+# Archivos basura de macOS
+.DS_Store
+
+# Binarios sueltos generados con `rustc archivo.rs`
+fase-1-base/ownership_lifetimes
+fase-1-base/traits_generics
+fase-1-base/errores_result
+fase-1-base/iterators_closures
+fase-2-intermedio/smart_pointers
+
+# Base de datos local de la API de ejemplo (se crea al correrla)
+*.sqlite
+*.sqlite-journal
+*.db
