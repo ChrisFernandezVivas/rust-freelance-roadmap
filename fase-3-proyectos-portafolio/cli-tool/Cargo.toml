@@ -1,0 +1,31 @@
+[package]
+name = "textkit"
+version = "0.1.0"
+edition = "2021"
+description = "Buscador y reemplazador de texto en archivos, recursivo, con clap + anyhow"
+
+[dependencies]
+# clap con la feature "derive": parseo de argumentos declarativo con
+# #[derive(Parser)] — el equivalente de argparse de Python, pero
+# verificado en tiempo de compilación (un flag mal tipeado no compila).
+clap = { version = "4", features = ["derive"] }
+
+# anyhow: manejo de errores "de aplicación" (a diferencia de una librería,
+# un binario casi nunca necesita que el caller haga match por tipo de
+# error — solo necesita loguearlo/mostrarlo con contexto). anyhow::Error
+# es un solo tipo que envuelve cualquier error + una cadena de contexto.
+anyhow = "1"
+
+# walkdir: recorrido recursivo de directorios, sin reinventar la rueda
+# (maneja symlinks, errores de permisos, etc. — cosas que en C se hacen
+# a mano con opendir/readdir y se rompen en los bordes).
+walkdir = "2"
+
+[dev-dependencies]
+# assert_cmd + predicates: el estándar de facto para tests de integración
+# de CLIs en Rust — ejecutan el binario COMPILADO de verdad (no llaman
+# funciones internas) y verifican stdout/stderr/exit code, como lo haría
+# un usuario real desde la terminal.
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
