@@ -1,0 +1,7 @@
+[package]
+name = "ejercicios-fase-1"
+version = "0.1.0"
+edition = "2021"
+description = "Ejercicios de la fase 1: ownership, traits, Result, iteradores y lifetimes"
+
+[dependencies]
