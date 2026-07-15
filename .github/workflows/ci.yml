@@ -1,0 +1,87 @@
+name: CI
+
+# Corre en cada push a main y en cada pull request — la verificación
+# automática que hace que "funciona en mi máquina" sea una garantía real
+# y no una promesa. Es lo que un cliente freelance espera ver en el repo.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # ---------------------------------------------------------------------
+  # Job principal: fmt + clippy + test sobre cada proyecto Cargo del repo.
+  # Un solo job parametrizado con matrix en vez de 7 jobs casi idénticos.
+  # ---------------------------------------------------------------------
+  proyectos-cargo:
+    name: ${{ matrix.proyecto }}
+    runs-on: ubuntu-latest
+    strategy:
+      # fail-fast: false para que un proyecto roto no cancele la
+      # verificación de los demás — queremos ver TODOS los resultados.
+      fail-fast: false
+      matrix:
+        proyecto:
+          - fase-1-base/ejercicios
+          - fase-2-intermedio/concurrencia
+          - fase-2-intermedio/async-tokio
+          - fase-2-intermedio/ejercicios
+          - fase-3-proyectos-portafolio/cli-tool
+          - fase-3-proyectos-portafolio/api-rest-axum
+          - fase-3-proyectos-portafolio/mini-blockchain
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar toolchain de Rust (stable + rustfmt + clippy)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cachear dependencias de cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ matrix.proyecto }}
+
+      - name: cargo fmt --check
+        working-directory: ${{ matrix.proyecto }}
+        run: cargo fmt --check
+
+      - name: cargo clippy (warnings tratados como error)
+        working-directory: ${{ matrix.proyecto }}
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: cargo test
+        working-directory: ${{ matrix.proyecto }}
+        run: cargo test --verbose
+
+  # ---------------------------------------------------------------------
+  # Los archivos .rs sueltos de fase 1 y 2 no son proyectos Cargo: son
+  # scripts standalone pensados para `rustc archivo.rs`. Los compilamos
+  # acá para garantizar que TODO el repo compila, no solo los proyectos.
+  # ---------------------------------------------------------------------
+  archivos-standalone:
+    name: Compilar archivos .rs sueltos con rustc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar toolchain de Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Compilar cada archivo standalone
+        run: |
+          set -e
+          for archivo in \
+            fase-1-base/ownership_lifetimes.rs \
+            fase-1-base/traits_generics.rs \
+            fase-1-base/errores_result.rs \
+            fase-1-base/iterators_closures.rs \
+            fase-2-intermedio/smart_pointers.rs
+          do
+            echo "== Compilando y corriendo $archivo =="
+            rustc "$archivo" -o "/tmp/$(basename "$archivo" .rs)"
+            "/tmp/$(basename "$archivo" .rs)" > /dev/null
+          done
