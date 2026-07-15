@@ -1,0 +1,8 @@
+[package]
+name = "ejercicios-fase-2"
+version = "0.1.0"
+edition = "2021"
+description = "Ejercicios de la fase 2: smart pointers, threads y async con Tokio"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }

@@ -1,0 +1,9 @@
+[package]
+name = "concurrencia"
+version = "0.1.0"
+edition = "2021"
+description = "Threads, Arc<Mutex> y channels mpsc — concurrencia clásica en Rust"
+
+# Sin dependencias: TODO esto es biblioteca estándar.
+# (Para concurrencia async, ver el proyecto hermano async-tokio/.)
+[dependencies]

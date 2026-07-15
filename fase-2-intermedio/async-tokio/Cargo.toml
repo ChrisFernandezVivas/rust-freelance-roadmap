@@ -1,0 +1,14 @@
+[package]
+name = "async-tokio"
+version = "0.1.0"
+edition = "2021"
+description = "tokio::spawn, tokio::sync y select! — concurrencia async en Rust"
+
+[dependencies]
+# Solo las features que usamos (buena costumbre: compila más rápido y
+# documenta qué partes de tokio necesita el proyecto de verdad).
+#   rt-multi-thread → el runtime multi-thread (#[tokio::main])
+#   macros          → #[tokio::main], #[tokio::test], select!
+#   time            → sleep, timeout, interval
+#   sync            → Mutex, mpsc, oneshot, watch async
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
